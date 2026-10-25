@@ -1,6 +1,6 @@
 "use strict";
 
-const DATA_URL = "data/scenar.json";
+const DATA_URL = "data/screenplay.json";
 const FLIP_MS = 800;
 const MAX_STACK_PX = 10;
 const SINGLE_PAGE_QUERY = window.matchMedia("(max-width: 799px)");
@@ -9,16 +9,16 @@ const MODES = ["web", "pdf", "book"];
 
 const state = {
   data: null,
-  blocks: [],             // flat list of chapter headings, lines and notes
-  characters: new Map(),  // id -> { id, name, original }
-  query: "",              // folded (lowercase, no diacritics) search text
+  blocks: [],
+  characters: new Map(),
+  query: "",
   activeChars: new Set(),
   mode: "web",
   soundOn: true,
   pdfRendered: false,
   book: {
-    pages: [],            // { kind, blocks?, number? }
-    pos: 0,               // shown page (left page of the spread in two-page mode)
+    pages: [],
+    pos: 0, // in two-page mode the left page of the spread
     single: false,
     flipping: false,
     contentCount: 0,
@@ -52,8 +52,6 @@ const els = {
   measure: document.getElementById("measure"),
   modeBtns: document.querySelectorAll("[data-mode-btn]"),
 };
-
-/* ---------- Helpers ---------- */
 
 function el(tag, className, text) {
   const node = document.createElement(tag);
@@ -90,12 +88,11 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-/** Lowercase and strip diacritics, so "helium" finds "hélium". */
 function fold(text) {
   return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
 }
 
-/** Folded text plus a map from each folded char back to its index in the original. */
+// The map points each folded char back to the original, so matches can be highlighted.
 function foldWithMap(text) {
   let folded = "";
   const map = [];
@@ -109,7 +106,6 @@ function foldWithMap(text) {
   return { folded, map };
 }
 
-/** Appends text to parent, wrapping matches of the folded query in <mark>. */
 function appendHighlighted(parent, text, query) {
   if (!query) {
     parent.append(text);
@@ -140,8 +136,6 @@ function czechPlural(n, one, few, many) {
 function characterName(id) {
   return state.characters.get(id)?.name ?? "???";
 }
-
-/* ---------- Data ---------- */
 
 function prepare(data) {
   for (const c of data.characters ?? []) state.characters.set(c.id, c);
@@ -176,8 +170,6 @@ function matches(block) {
   return !state.query || block.search.includes(state.query);
 }
 
-/* ---------- Rendering of single blocks (web, PDF and book) ---------- */
-
 function renderBlock(block, query) {
   if (block.type === "chapter") {
     const head = el("div", "chapter-head");
@@ -196,8 +188,6 @@ function renderBlock(block, query) {
   line.append(who, text);
   return line;
 }
-
-/* ---------- Web view ---------- */
 
 function renderScript() {
   const filtering = isFiltering();
@@ -254,7 +244,6 @@ function renderChips() {
     });
     chips.push(chip);
   }
-  // Without any assigned speakers there is nothing to filter by.
   els.chips.hidden = chips.length === 0;
   if (!chips.length) return;
 
@@ -279,13 +268,6 @@ function syncChips() {
   }
 }
 
-/* ---------- Pagination (shared by book and PDF) ---------- */
-
-/**
- * Splits all blocks into pages by filling the off-screen measure page until it
- * overflows. `skeleton(body)` returns the page parts (header, body, footer).
- * Every chapter starts on a new page. `slack` keeps a safety margin (0–1).
- */
 function paginate(skeleton, slack = 0) {
   const body = el("div", "page__body");
   els.measure.replaceChildren(...skeleton(body));
@@ -319,8 +301,6 @@ function paginate(skeleton, slack = 0) {
   flush();
   return pages;
 }
-
-/* ---------- PDF view ---------- */
 
 function renderPdf() {
   if (state.pdfRendered) return;
@@ -364,13 +344,11 @@ function renderPdf() {
   state.pdfRendered = true;
 }
 
-/* ---------- Book: pages ---------- */
-
 function buildBookPages(contentPages) {
   const single = state.book.single;
   const pages = [];
-  // Two-page spreads: [nothing | cover], [endpaper | title], ... so the closed
-  // cover sits on the right and opens like a real book.
+  // Spreads start with [nothing | cover], so the closed cover sits on the right
+  // and opens like a real book.
   if (!single) pages.push({ kind: "none" });
   pages.push({ kind: "cover" });
   if (!single) pages.push({ kind: "endpaper" });
@@ -450,7 +428,6 @@ function paintPage(pageEl, pageIndex, side) {
   pageEl.replaceChildren(...buildPageContent(page));
 }
 
-/** Plain paper for the back of a page turned in single-page mode. */
 function paintVerso(pageEl) {
   pageEl.dataset.kind = "blank";
   pageEl.dataset.side = "left";
@@ -477,7 +454,6 @@ function currentAnchor() {
   return content ? content.blocks[0].idx : null;
 }
 
-/** (Re)builds the book for the current size while keeping the reading position. */
 function layoutBook() {
   const book = state.book;
   if (state.mode !== "book" || !state.data) return;
@@ -499,7 +475,6 @@ function layoutBook() {
   book.single = SINGLE_PAGE_QUERY.matches;
   els.book.classList.toggle("book--single", book.single);
 
-  // The measure page must match a real page exactly.
   const rect = els.pageRight.getBoundingClientRect();
   const measure = els.measure;
   measure.className = "page measure";
@@ -519,7 +494,6 @@ function layoutBook() {
   showPages();
 }
 
-/** Closed-book centring and page-block thickness for the given position. */
 function updateFrame(pos) {
   const { pages, single } = state.book;
   const [left, right] = single ? [null, pages[pos]] : visiblePages(pos);
@@ -564,8 +538,6 @@ function showPages() {
   const anchor = currentAnchor();
   savePref("ppm-book-anchor", anchor == null ? "" : String(anchor));
 }
-
-/* ---------- Book: turning pages ---------- */
 
 function flip(direction) {
   const book = state.book;
@@ -613,13 +585,11 @@ function animateSpread(direction, target) {
     showPages();
   };
   if (direction > 0) {
-    // The right page turns over to the left; the new right page lies underneath.
     paintPage(els.leafFront, pos + 1, "right");
     paintPage(els.leafBack, target, "left");
     paintPage(els.pageRight, target + 1, "right");
     runLeaf("leaf--forward", 0, -180, finish);
   } else {
-    // The left page turns back to the right; the new left page lies underneath.
     paintPage(els.leafFront, pos, "left");
     paintPage(els.leafBack, target + 1, "right");
     paintPage(els.pageLeft, target, "left");
@@ -631,7 +601,6 @@ function animateSingle(direction, target) {
   const pos = state.book.pos;
   paintVerso(els.leafBack);
   if (direction > 0) {
-    // The current page swings away over the spine, revealing the next one.
     paintPage(els.leafFront, pos, "right");
     paintPage(els.pageRight, target, "right");
     runLeaf("leaf--single", 0, -180, () => {
@@ -639,7 +608,6 @@ function animateSingle(direction, target) {
       showPages();
     });
   } else {
-    // The previous page swings back in on top of the current one.
     paintPage(els.leafFront, target, "right");
     runLeaf("leaf--single", -180, 0, () => {
       state.book.pos = target;
@@ -673,8 +641,6 @@ function goToPage(index) {
   showPages();
 }
 
-/* ---------- Sound: synthesized paper rustle (no audio files needed) ---------- */
-
 let audioCtx = null;
 
 function playFlipSound(heavy) {
@@ -696,7 +662,6 @@ function playFlipSound(heavy) {
     const filter = audioCtx.createBiquadFilter();
     filter.type = "bandpass";
     filter.Q.value = 0.7;
-    // A leather cover sounds lower and duller than a sheet of paper.
     filter.frequency.setValueAtTime(heavy ? 1400 : 3800, now);
     filter.frequency.exponentialRampToValueAtTime(heavy ? 300 : 900, now + duration);
     const gain = audioCtx.createGain();
@@ -714,8 +679,6 @@ function setSound(on) {
   els.soundBtn.textContent = on ? "Zvuk: zap" : "Zvuk: vyp";
   savePref("ppm-sound", on ? "on" : "off");
 }
-
-/* ---------- Modes ---------- */
 
 function setMode(mode) {
   state.mode = MODES.includes(mode) ? mode : "web";
@@ -736,8 +699,6 @@ function setMode(mode) {
     document.exitFullscreen?.();
   }
 }
-
-/* ---------- Events ---------- */
 
 function bindEvents() {
   const onSearch = debounce(() => {
@@ -805,7 +766,6 @@ function bindEvents() {
     e.preventDefault();
   });
 
-  // Click on the left/right half of the book, or swipe, to turn pages.
   let startX = null;
   els.book.addEventListener("pointerdown", (e) => {
     startX = e.clientX;
@@ -832,8 +792,6 @@ function bindEvents() {
     layoutBook();
   });
 }
-
-/* ---------- Start ---------- */
 
 async function init() {
   setSound(loadPref("ppm-sound", "on") === "on");

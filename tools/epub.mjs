@@ -1,7 +1,3 @@
-// Builds an EPUB 3 e-book from data/scenar.json into dist/par-parmenu.epub.
-// No dependencies: the ZIP container is written by hand (zlib for deflate).
-// The book also carries an NCX table of contents for older readers.
-//
 // Usage: node tools/epub.mjs
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -10,14 +6,12 @@ import { fileURLToPath } from "node:url";
 import { deflateRawSync } from "node:zlib";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const SOURCE = resolve(ROOT, "data/scenar.json");
+const SOURCE = resolve(ROOT, "data/screenplay.json");
 const OUT_DIR = resolve(ROOT, "dist");
 const OUTPUT = resolve(OUT_DIR, "par-parmenu.epub");
 
 const data = JSON.parse(await readFile(SOURCE, "utf8"));
 const characters = new Map((data.characters ?? []).map((c) => [c.id, c.name]));
-
-/* ---------- Content ---------- */
 
 const esc = (text) => String(text)
   .replace(/&/g, "&amp;")
@@ -142,8 +136,7 @@ const container = `<?xml version="1.0" encoding="utf-8"?>
 </container>
 `;
 
-/* ---------- ZIP writer ---------- */
-
+// Minimal ZIP writer, so the EPUB can be built without dependencies.
 const CRC_TABLE = new Uint32Array(256).map((_, n) => {
   let c = n;
   for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
@@ -162,7 +155,6 @@ function dosDateTime(date) {
   return { time, day };
 }
 
-/** files: [{ name, data, store? }] – "mimetype" must be first and stored (EPUB rule). */
 function zip(files) {
   const { time, day } = dosDateTime(new Date());
   const locals = [];
@@ -218,8 +210,7 @@ function zip(files) {
   return Buffer.concat([...locals, ...centrals, end]);
 }
 
-/* ---------- Write ---------- */
-
+// EPUB requires "mimetype" as the first entry, uncompressed.
 const files = [
   { name: "mimetype", data: "application/epub+zip", store: true },
   { name: "META-INF/container.xml", data: container },

@@ -1,4 +1,3 @@
-// Minimal static file server for local development (no dependencies).
 // Usage: node tools/serve.mjs [port]
 import { createServer } from "node:http";
 import { readFile } from "node:fs/promises";
@@ -27,7 +26,6 @@ createServer(async (req, res) => {
   const relative = normalize(urlPath === "/" ? "/index.html" : urlPath);
   const file = join(ROOT, relative);
 
-  // Never serve anything outside the project folder.
   if (!file.startsWith(ROOT)) {
     res.writeHead(403).end("Forbidden");
     return;

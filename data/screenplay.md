@@ -1,7 +1,7 @@
 # Pár Pařmenů
 
 <!-- fps: 25 -->
-<!-- Převedeno z data/raw/titulky_parparmenu.txt. Jména postav doplňte místo **???** (viz data/postavy.json), -->
+<!-- Převedeno z data/raw/titulky_parparmenu.txt. Jména postav doplňte místo **???** (viz data/characters.json), -->
 <!-- názvy kapitol přepište podle sebe. Čísla v komentářích jsou snímky z titulků, nemazat. -->
 
 ## Kapitola 1

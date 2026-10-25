@@ -1,7 +1,3 @@
-// Converts MicroDVD subtitles ({start}{end}line 1|line 2) into data/scenar.md,
-// the human-editable source of the script. Run once, then edit scenar.md by hand
-// (speaker names, chapter titles). Refuses to overwrite scenar.md without --force.
-//
 // Usage: node tools/subs-to-md.mjs [input.txt] [--force]
 import { access, readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
@@ -9,10 +5,10 @@ import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
 const DEFAULT_INPUT = resolve(ROOT, "data/raw/titulky_parparmenu.txt");
-const OUTPUT = resolve(ROOT, "data/scenar.md");
+const OUTPUT = resolve(ROOT, "data/screenplay.md");
 
-const CHAPTER_GAP_SECONDS = 60; // a pause longer than this starts a new chapter
-const MERGE_GAP_SECONDS = 2;    // unfinished sentences closer than this are joined
+const CHAPTER_GAP_SECONDS = 60;
+const MERGE_GAP_SECONDS = 2;
 const UNKNOWN = "???";
 
 const args = process.argv.slice(2);
@@ -35,7 +31,7 @@ function parseCues(raw) {
     const m = /^\{(\d+)\}\{(\d+)\}(.*)$/.exec(line.trim());
     if (!m) continue;
     const [, start, end, text] = m;
-    // MicroDVD header: {1}{1}25.000 carries the frame rate
+    // MicroDVD stores the frame rate as a fake first cue: {1}{1}25.000
     if (start === "1" && end === "1" && /^\d+(\.\d+)?$/.test(text.trim())) {
       fps = Number(text);
       continue;
@@ -53,12 +49,12 @@ const isTitleCard = (text) => {
 };
 const endsSentence = (text) => /[.!?…"“”)\]]$/.test(text) && !text.endsWith("...");
 
-/** Splits one cue into replicas: a part starting with a single dash is a new speaker. */
 function splitReplicas(text) {
   const replicas = [];
   for (const rawPart of text.split("|")) {
     const part = clean(rawPart);
     if (!part) continue;
+    // A single leading dash marks a new speaker; "--" is just stylised speech.
     const dash = /^-(?!-)\s*/.exec(part);
     if (dash) replicas.push({ text: part.slice(dash[0].length), dashed: true });
     else if (replicas.length) replicas[replicas.length - 1].text += ` ${part}`;
@@ -86,6 +82,8 @@ function buildChapters(fps, cues) {
       continue;
     }
 
+    // Long sentences are split over several cues; join them back so there are
+    // fewer replicas to assign a speaker to by hand.
     const replicas = splitReplicas(cue.text);
     const prev = chapter.items[chapter.items.length - 1];
     const first = replicas[0];
@@ -109,7 +107,7 @@ function toMarkdown(fps, chapters, source) {
     "# Pár Pařmenů",
     "",
     `<!-- fps: ${fps} -->`,
-    `<!-- Převedeno z ${source}. Jména postav doplňte místo **${UNKNOWN}** (viz data/postavy.json), -->`,
+    `<!-- Převedeno z ${source}. Jména postav doplňte místo **${UNKNOWN}** (viz data/characters.json), -->`,
     "<!-- názvy kapitol přepište podle sebe. Čísla v komentářích jsou snímky z titulků, nemazat. -->",
     "",
   ];
@@ -124,6 +122,7 @@ function toMarkdown(fps, chapters, source) {
   return out.join("\n");
 }
 
+// The output is edited by hand afterwards, so never overwrite it silently.
 if ((await exists(OUTPUT)) && !force) {
   console.error(`${OUTPUT} už existuje a mohl by obsahovat ruční úpravy. Přepsat jen s --force.`);
   process.exit(1);

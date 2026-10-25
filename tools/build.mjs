@@ -1,22 +1,12 @@
-// Builds data/scenar.json (read by the web) from data/scenar.md and data/postavy.json.
-//
-// scenar.md format (paragraphs separated by a blank line):
-//   # Title                      document title
-//   ## Chapter title             starts a chapter
-//   **Name**                     speaker; the following lines are the replica
-//   Replica text <!-- 825-880 -->
-//   (Stage direction) <!-- 448-541 -->
-// "???" as a name means the speaker is not known yet.
-//
 // Usage: node tools/build.mjs
 import { readFile, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const ROOT = resolve(fileURLToPath(new URL("..", import.meta.url)));
-const SOURCE = resolve(ROOT, "data/scenar.md");
-const CHARACTERS = resolve(ROOT, "data/postavy.json");
-const OUTPUT = resolve(ROOT, "data/scenar.json");
+const SOURCE = resolve(ROOT, "data/screenplay.md");
+const CHARACTERS = resolve(ROOT, "data/characters.json");
+const OUTPUT = resolve(ROOT, "data/screenplay.json");
 
 const fold = (text) => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase().trim();
 const slug = (text) => fold(text).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -24,13 +14,12 @@ const slug = (text) => fold(text).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, 
 const md = (await readFile(SOURCE, "utf8")).replace(/\r\n/g, "\n");
 const characters = JSON.parse(await readFile(CHARACTERS, "utf8"));
 
-// Every name, alias, id and first name points to the character id.
 const byName = new Map();
 for (const c of characters) {
   for (const key of [c.id, c.name, c.name.split(" ")[0], ...(c.aliases ?? [])]) byName.set(fold(key), c.id);
 }
 
-const unknownNames = new Map(); // name -> count, for names missing in postavy.json
+const unknownNames = new Map();
 let unknownSpeakers = 0;
 
 function resolveSpeaker(name) {
@@ -117,6 +106,6 @@ console.log(`Hotovo: ${chapters.length} kapitol, ${blocks.filter((b) => b.type =
   + `${blocks.filter((b) => b.type === "note").length} poznámek → ${OUTPUT}`);
 console.log(`Replik bez určené postavy (???): ${unknownSpeakers}`);
 if (unknownNames.size) {
-  console.log("Jména, která nejsou v data/postavy.json (přidána automaticky, zkontrolujte překlepy):");
+  console.log("Jména, která nejsou v data/characters.json (přidána automaticky, zkontrolujte překlepy):");
   for (const [name, count] of unknownNames) console.log(`  ${name} (${count}×)`);
 }

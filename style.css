@@ -1,9 +1,3 @@
-/* ==========================================================================
-   Pár Pařmenů – Čistý Scénář
-   One fixed theme: dark wood, parchment, leather and gold.
-   Layers: tokens → base → topbar → script blocks → web → PDF → book → print
-   ========================================================================== */
-
 :root {
   color-scheme: dark;
 
@@ -25,7 +19,6 @@
   --font-book: "EB Garamond", Georgia, "Times New Roman", serif;
   --font-title: "Cinzel", Georgia, serif;
 
-  /* Fine grain noise, tinted brown; reused by paper and leather */
   --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.32 0 0 0 0 0.22 0 0 0 0 0.08 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   --noise-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.12' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
@@ -43,8 +36,6 @@
   --flip-ms: 800ms;
   --a4-w: min(794px, calc(100vw - 2rem));
 }
-
-/* ---------- Base ---------- */
 
 *,
 *::before,
@@ -105,7 +96,6 @@ mark {
   white-space: nowrap;
 }
 
-/* Mode-specific parts of the UI */
 body:not([data-mode="web"]) [data-for="web"],
 body:not([data-mode="pdf"]) [data-for="pdf"] {
   display: none !important;
@@ -115,8 +105,6 @@ body[data-mode="book"] .topbar,
 body[data-mode="book"] .site-footer {
   display: none;
 }
-
-/* ---------- Buttons ---------- */
 
 .btn,
 .segmented button {
@@ -176,8 +164,6 @@ body[data-mode="book"] .site-footer {
   color: #1e130a;
   font-weight: 600;
 }
-
-/* ---------- Topbar ---------- */
 
 .topbar {
   position: sticky;
@@ -329,7 +315,6 @@ body[data-mode="pdf"] .topbar {
     padding: 0.4rem 0.65rem;
   }
 
-  /* One swipeable row of character chips instead of several lines */
   .chips {
     flex-wrap: nowrap;
     overflow-x: auto;
@@ -342,8 +327,6 @@ body[data-mode="pdf"] .topbar {
     justify-content: flex-start;
   }
 }
-
-/* ---------- Main / status ---------- */
 
 .main {
   flex: 1;
@@ -375,8 +358,6 @@ body[data-mode="pdf"] .topbar {
   border: 1px dashed var(--gold);
   color: var(--gold-light);
 }
-
-/* ---------- Script blocks (web, PDF and book pages) ---------- */
 
 .chapter-head {
   margin: 0 0 1.4em;
@@ -421,7 +402,6 @@ body[data-mode="pdf"] .topbar {
   margin: 0.05em 0 0;
 }
 
-/* Illuminated initial at the start of each chapter */
 .line--first .line__text::first-letter {
   float: left;
   margin: 0.05em 0.1em 0 0;
@@ -442,8 +422,6 @@ body[data-mode="pdf"] .topbar {
   font-style: italic;
   color: var(--ink-muted);
 }
-
-/* ---------- Web view ---------- */
 
 .script {
   width: calc(100% - 2rem);
@@ -488,8 +466,6 @@ body[data-mode="pdf"] .topbar {
     font-size: 1.1rem;
   }
 }
-
-/* ---------- PDF view (A4 preview) ---------- */
 
 .pdf-view {
   display: flex;
@@ -585,8 +561,6 @@ body[data-mode="pdf"] .topbar {
   color: #7a6545;
 }
 
-/* ---------- Pages shared by book and measuring ---------- */
-
 .page__body {
   flex: 1;
   min-height: 0;
@@ -600,8 +574,6 @@ body[data-mode="pdf"] .topbar {
   visibility: hidden;
   pointer-events: none;
 }
-
-/* ---------- Book view ---------- */
 
 .book-view {
   flex: 1;
@@ -705,7 +677,6 @@ body[data-mode="pdf"] .topbar {
   transform: translateX(calc(var(--page-w) / 2));
 }
 
-/* Leather boards around the pages */
 .book__board {
   position: absolute;
   inset: -12px -16px;
@@ -725,7 +696,7 @@ body[data-mode="pdf"] .topbar {
   right: calc(var(--page-w) - 4px);
 }
 
-/* Edges of the page block; thickness follows reading progress */
+/* Width is set from JS according to reading progress */
 .book__stack {
   position: absolute;
   top: 3px;
@@ -747,7 +718,6 @@ body[data-mode="pdf"] .topbar {
   border-radius: 0 2px 2px 0;
 }
 
-/* One book page */
 .page {
   position: relative;
   display: flex;
@@ -778,7 +748,6 @@ body[data-mode="pdf"] .topbar {
   left: var(--page-w);
 }
 
-/* Shadow towards the spine and darker outer edge */
 .page[data-side="left"] {
   background-image:
     linear-gradient(to left, rgb(60 35 10 / 0.38), rgb(60 35 10 / 0.08) 6%, transparent 14%),
@@ -801,7 +770,6 @@ body[data-mode="pdf"] .topbar {
   color: var(--ink-muted);
 }
 
-/* Page kinds */
 .page[data-kind="none"] {
   background: none;
   visibility: hidden;
@@ -875,7 +843,6 @@ body[data-mode="pdf"] .topbar {
   color: rgb(236 208 138 / 0.75);
 }
 
-/* The ring – with a microchip, of course */
 .cover__emblem {
   position: relative;
   width: 4.6em;
@@ -1023,7 +990,6 @@ body[data-mode="pdf"] .topbar {
   transform: rotateY(180deg);
 }
 
-/* Light and shadow sweeping over the leaf while it turns */
 .leaf__face::after {
   content: "";
   position: absolute;
@@ -1047,7 +1013,6 @@ body[data-mode="pdf"] .topbar {
   100% { opacity: 0; }
 }
 
-/* Narrow screens: one page at a time, buttons below the book */
 /* Phones are tall, so a single page gets a slimmer format than a spread */
 .book--single {
   --page-h: min(calc(100dvh - 9.5rem), calc((100vw - 3rem) / 0.62));
@@ -1105,8 +1070,6 @@ body[data-mode="pdf"] .topbar {
   }
 }
 
-/* ---------- Footer ---------- */
-
 .site-footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid rgb(201 162 74 / 0.25);
@@ -1114,8 +1077,6 @@ body[data-mode="pdf"] .topbar {
   font-size: 0.78rem;
   text-align: center;
 }
-
-/* ---------- Print ---------- */
 
 @media print {
   @page {
@@ -1143,7 +1104,6 @@ body[data-mode="pdf"] .topbar {
     display: none !important;
   }
 
-  /* PDF mode prints exactly the previewed A4 pages */
   body[data-mode="pdf"] #script {
     display: none !important;
   }
@@ -1166,7 +1126,7 @@ body[data-mode="pdf"] .topbar {
     break-after: auto;
   }
 
-  /* Other modes (Ctrl+P): print the continuous text */
+  /* Ctrl+P outside PDF mode prints the continuous text */
   body:not([data-mode="pdf"]) #script,
   body:not([data-mode="pdf"]) #script[hidden] {
     display: block !important;
