@@ -1,0 +1,7 @@
+[
+  { "id": "fritol", "name": "Fritol Šourek", "original": "Frodo", "aliases": ["Fríťa", "Fríťo"] },
+  { "id": "slim", "name": "Slim", "original": "Sam", "aliases": ["Slimsněd", "Slimsněd Chrupavka"] },
+  { "id": "smajdalf", "name": "Šmajdalf Šmejdoplášť", "original": "Gandalf", "aliases": [] },
+  { "id": "saudruh", "name": "Saudruh", "original": "Sauron", "aliases": [] },
+  { "id": "paragon", "name": "Paragon", "original": "Aragorn", "aliases": ["Účtenka", "Chodník"] }
+]

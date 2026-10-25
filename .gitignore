@@ -1,0 +1,6 @@
+# Raw subtitles stay local so they never get published by accident
+data/raw/
+
+node_modules/
+dist/
+*.epub

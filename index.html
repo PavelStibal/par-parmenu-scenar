@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Pár Pařmenů – Čistý Scénář</title>
+  <meta name="description" content="Neoficiální fanouškovský scénář parodie Pár Pařmenů (Banda Trotlů, 2004).">
+  <meta name="theme-color" content="#24170f">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;600&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body data-mode="web">
+  <header class="topbar">
+    <div class="brand">
+      <h1 class="brand__title">Pár Pařmenů</h1>
+      <p class="brand__subtitle">Čistý scénář</p>
+    </div>
+
+    <div class="segmented modes" role="group" aria-label="Režim zobrazení">
+      <button type="button" data-mode-btn="web" aria-pressed="true">Web</button>
+      <button type="button" data-mode-btn="pdf" aria-pressed="false">PDF</button>
+      <button type="button" data-mode-btn="book" aria-pressed="false">Kniha</button>
+    </div>
+
+    <div class="search" data-for="web">
+      <label class="visually-hidden" for="search-input">Hledat hlášku</label>
+      <input id="search-input" class="search__input" type="search"
+             placeholder="Hledat hlášku… (např. hélium)" autocomplete="off" spellcheck="false">
+      <span id="search-count" class="search__count" aria-live="polite"></span>
+    </div>
+
+    <div class="pdf-actions" data-for="pdf">
+      <button type="button" id="print-btn" class="btn btn--gold">Tisknout / uložit PDF</button>
+      <span class="pdf-actions__hint">V dialogu tisku zvolte „Uložit jako PDF“.</span>
+    </div>
+
+    <div id="character-filter" class="chips" data-for="web" role="group" aria-label="Filtr podle postav"></div>
+  </header>
+
+  <main class="main">
+    <p id="status" class="status" role="status">Načítám scénář…</p>
+    <p id="sample-banner" class="banner" hidden>Ukázková data – skutečný scénář se doplní z titulků.</p>
+
+    <!-- Web: continuous text with search -->
+    <article id="script" class="script" aria-label="Scénář"></article>
+
+    <!-- PDF: A4 page preview, the same pages are printed -->
+    <section id="pdf-view" class="pdf-view" aria-label="Náhled pro tisk" hidden>
+      <p id="pdf-info" class="pdf-info"></p>
+      <div id="pdf-pages" class="pdf-pages"></div>
+    </section>
+
+    <!-- Book: full-screen magic book -->
+    <section id="book-view" class="book-view" aria-label="Kniha" hidden>
+      <div class="book-controls">
+        <button type="button" id="book-back" class="btn btn--ghost">← Zpět na web</button>
+        <span id="page-indicator" class="book-controls__indicator" aria-live="polite"></span>
+        <div class="book-controls__right">
+          <button type="button" id="sound-btn" class="btn btn--ghost" aria-pressed="true">Zvuk</button>
+          <button type="button" id="fullscreen-btn" class="btn btn--ghost">Celá obrazovka</button>
+        </div>
+      </div>
+
+      <div class="book-stage">
+        <button type="button" id="prev-btn" class="book-nav" aria-label="Předchozí stránka">‹</button>
+        <div id="book" class="book">
+          <div class="book__board" aria-hidden="true"></div>
+          <div class="book__stack book__stack--left" aria-hidden="true"></div>
+          <div class="book__stack book__stack--right" aria-hidden="true"></div>
+          <div id="page-left" class="page page--left" data-side="left"></div>
+          <div id="page-right" class="page page--right" data-side="right"></div>
+          <div id="leaf" class="leaf" hidden>
+            <div id="leaf-front" class="page leaf__face leaf__front"></div>
+            <div id="leaf-back" class="page leaf__face leaf__back"></div>
+          </div>
+        </div>
+        <button type="button" id="next-btn" class="book-nav" aria-label="Další stránka">›</button>
+      </div>
+
+      <p class="book-hint">Listujte šipkami ← →, kliknutím na stránku nebo tažením · Esc zpět</p>
+    </section>
+
+    <!-- Off-screen page used to measure how much text fits on one page -->
+    <div id="measure" class="measure" aria-hidden="true"></div>
+  </main>
+
+  <footer class="site-footer">
+    Neoficiální nekomerční fanouškovský projekt. Texty © Banda Trotlů (2004).
+    <i>The Lord of the Rings</i> © příslušní držitelé práv.
+  </footer>
+</body>
+</html>

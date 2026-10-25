@@ -1,0 +1,1185 @@
+/* ==========================================================================
+   Pár Pařmenů – Čistý Scénář
+   One fixed theme: dark wood, parchment, leather and gold.
+   Layers: tokens → base → topbar → script blocks → web → PDF → book → print
+   ========================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  --wood-900: #170e08;
+  --wood-800: #22160e;
+  --wood-700: #32211a;
+  --gold: #c9a24a;
+  --gold-light: #ecd08a;
+  --gold-dark: #8c6a24;
+  --parchment: #f1e2bf;
+  --parchment-soft: #d9c7a0;
+  --ink: #2a1b0f;
+  --ink-muted: #6e5537;
+  --wax: #8a2619;
+  --leather: #4a1810;
+  --paper-white: #fffdf7;
+
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-book: "EB Garamond", Georgia, "Times New Roman", serif;
+  --font-title: "Cinzel", Georgia, serif;
+
+  /* Fine grain noise, tinted brown; reused by paper and leather */
+  --noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.32 0 0 0 0 0.22 0 0 0 0 0.08 0 0 0 0.22 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  --noise-coarse: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.12' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+
+  --paper-images:
+    var(--noise),
+    radial-gradient(circle at 82% 12%, rgb(139 94 40 / 0.13), transparent 22%),
+    radial-gradient(circle at 12% 88%, rgb(139 94 40 / 0.10), transparent 28%),
+    radial-gradient(ellipse at center, transparent 55%, rgb(120 80 30 / 0.28) 100%);
+  --leather-images:
+    var(--noise-coarse),
+    var(--noise),
+    radial-gradient(ellipse at 40% 35%, rgb(255 200 150 / 0.10), transparent 60%),
+    linear-gradient(135deg, #5a1d13, #2e0c07);
+
+  --flip-ms: 800ms;
+  --a4-w: min(794px, calc(100vw - 2rem));
+}
+
+/* ---------- Base ---------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--wood-900);
+  background-image:
+    radial-gradient(ellipse at 30% 0%, rgb(255 190 110 / 0.10), transparent 60%),
+    repeating-linear-gradient(92deg, rgb(255 255 255 / 0.014) 0 2px, transparent 2px 9px),
+    linear-gradient(var(--wood-800), var(--wood-900));
+  background-attachment: fixed;
+  color: var(--parchment);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold-light);
+  outline-offset: 2px;
+}
+
+mark {
+  background: rgb(201 162 74 / 0.45);
+  color: inherit;
+  border-radius: 2px;
+  padding: 0 0.05em;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Mode-specific parts of the UI */
+body:not([data-mode="web"]) [data-for="web"],
+body:not([data-mode="pdf"]) [data-for="pdf"] {
+  display: none !important;
+}
+
+body[data-mode="book"] .topbar,
+body[data-mode="book"] .site-footer {
+  display: none;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn,
+.segmented button {
+  padding: 0.45rem 0.9rem;
+  border: 1px solid rgb(201 162 74 / 0.55);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--gold-light);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.btn:hover,
+.segmented button:hover {
+  background: rgb(201 162 74 / 0.12);
+}
+
+.btn--gold {
+  background: linear-gradient(#d8b25c, #a8812f);
+  border-color: #e6c77a;
+  color: #1e130a;
+  font-weight: 600;
+}
+
+.btn--gold:hover {
+  background: linear-gradient(#e6c06a, #b68d36);
+}
+
+.btn--ghost {
+  border-color: rgb(236 208 138 / 0.3);
+  background: rgb(0 0 0 / 0.25);
+}
+
+.segmented {
+  display: inline-flex;
+}
+
+.segmented button {
+  border-radius: 0;
+}
+
+.segmented button + button {
+  margin-left: -1px;
+}
+
+.segmented button:first-child {
+  border-radius: 6px 0 0 6px;
+}
+
+.segmented button:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.segmented button[aria-pressed="true"] {
+  background: linear-gradient(#d8b25c, #a8812f);
+  border-color: #e6c77a;
+  color: #1e130a;
+  font-weight: 600;
+}
+
+/* ---------- Topbar ---------- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "brand search modes"
+    "chips chips chips";
+  gap: 0.75rem 1.5rem;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(var(--wood-700), var(--wood-800));
+  border-bottom: 1px solid rgb(201 162 74 / 0.35);
+  box-shadow: 0 4px 18px rgb(0 0 0 / 0.45);
+}
+
+body[data-mode="pdf"] .topbar {
+  grid-template-areas: "brand pdf modes";
+}
+
+.brand {
+  grid-area: brand;
+}
+
+.brand__title {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 1.4rem;
+  line-height: 1.1;
+  color: var(--gold-light);
+  text-shadow: 0 1px 0 #000;
+}
+
+.brand__subtitle {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--parchment-soft);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.modes {
+  grid-area: modes;
+  justify-self: end;
+}
+
+.search {
+  grid-area: search;
+  position: relative;
+}
+
+.search__input {
+  width: 100%;
+  padding: 0.6rem 6.5rem 0.6rem 1rem;
+  border: 1px solid var(--gold-dark);
+  border-radius: 999px;
+  background-color: var(--parchment);
+  background-image: var(--noise);
+  color: var(--ink);
+  font: inherit;
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.2);
+}
+
+.search__input::placeholder {
+  color: var(--ink-muted);
+}
+
+.search__input:focus {
+  outline: none;
+  border-color: var(--gold-light);
+  box-shadow: inset 0 2px 4px rgb(0 0 0 / 0.2), 0 0 0 3px rgb(201 162 74 / 0.35);
+}
+
+.search__count {
+  position: absolute;
+  right: 2.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+  pointer-events: none;
+}
+
+.pdf-actions {
+  grid-area: pdf;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pdf-actions__hint {
+  font-size: 0.8rem;
+  color: var(--parchment-soft);
+}
+
+.chips {
+  grid-area: chips;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid rgb(201 162 74 / 0.4);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--parchment);
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  border-color: var(--gold-light);
+}
+
+.chip[aria-pressed="true"] {
+  background: var(--gold);
+  border-color: var(--gold-light);
+  color: #1e130a;
+}
+
+.chip__original {
+  opacity: 0.7;
+}
+
+@media (max-width: 799px) {
+  .topbar,
+  body[data-mode="pdf"] .topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "brand modes"
+      "search search"
+      "chips chips"
+      "pdf pdf";
+    gap: 0.6rem 0.75rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .brand__title {
+    font-size: 1.15rem;
+  }
+
+  .segmented button {
+    padding: 0.4rem 0.65rem;
+  }
+
+  /* One swipeable row of character chips instead of several lines */
+  .chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin: 0 -1rem;
+    padding: 0 1rem 0.1rem;
+  }
+
+  .pdf-actions {
+    justify-content: flex-start;
+  }
+}
+
+/* ---------- Main / status ---------- */
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.status,
+.banner {
+  width: calc(100% - 2rem);
+  max-width: 48rem;
+  margin: 1rem auto 0;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-size: 0.875rem;
+}
+
+.status {
+  color: var(--parchment-soft);
+}
+
+.status--error {
+  background: rgb(138 38 25 / 0.35);
+  border: 1px solid rgb(220 120 100 / 0.5);
+  color: var(--parchment);
+}
+
+.banner {
+  border: 1px dashed var(--gold);
+  color: var(--gold-light);
+}
+
+/* ---------- Script blocks (web, PDF and book pages) ---------- */
+
+.chapter-head {
+  margin: 0 0 1.4em;
+  text-align: center;
+}
+
+.chapter__title {
+  margin: 0;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 1.4em;
+  letter-spacing: 0.05em;
+  color: var(--wax);
+}
+
+.chapter__ornament {
+  display: block;
+  margin-top: 0.15em;
+  color: var(--gold-dark);
+  font-size: 1.1em;
+}
+
+.line {
+  margin: 0 0 0.95em;
+}
+
+.line__who {
+  display: block;
+  font-family: var(--font-title);
+  font-weight: 700;
+  font-size: 0.68em;
+  letter-spacing: 0.12em;
+  color: var(--wax);
+}
+
+.line__who--unknown {
+  color: var(--ink-muted);
+  opacity: 0.7;
+}
+
+.line__text {
+  margin: 0.05em 0 0;
+}
+
+/* Illuminated initial at the start of each chapter */
+.line--first .line__text::first-letter {
+  float: left;
+  margin: 0.05em 0.1em 0 0;
+  font-family: var(--font-title);
+  font-size: 3.1em;
+  line-height: 0.82;
+  color: var(--wax);
+  text-shadow: 1px 1px 0 rgb(201 162 74 / 0.6);
+}
+
+.line--first {
+  display: flow-root;
+}
+
+.note {
+  margin: 0 0 0.95em;
+  text-align: center;
+  font-style: italic;
+  color: var(--ink-muted);
+}
+
+/* ---------- Web view ---------- */
+
+.script {
+  width: calc(100% - 2rem);
+  max-width: 48rem;
+  margin: 1.5rem auto 3rem;
+  padding: 3rem 3.5rem;
+  border-radius: 3px;
+  background-color: var(--parchment);
+  background-image: var(--paper-images);
+  color: var(--ink);
+  font-family: var(--font-book);
+  font-size: 1.2rem;
+  line-height: 1.55;
+  box-shadow: 0 20px 50px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(0 0 0 / 0.4);
+}
+
+.script .chapter + .chapter {
+  margin-top: 3rem;
+}
+
+.script .line {
+  padding-left: 0.9rem;
+  border-left: 2px solid transparent;
+}
+
+.script .line:hover {
+  border-left-color: rgb(138 38 25 / 0.35);
+}
+
+.empty {
+  margin: 2rem 0;
+  text-align: center;
+  color: var(--ink-muted);
+}
+
+@media (max-width: 799px) {
+  .script {
+    width: 100%;
+    margin: 0;
+    padding: 1.75rem 1.1rem 3rem;
+    border-radius: 0;
+    font-size: 1.1rem;
+  }
+}
+
+/* ---------- PDF view (A4 preview) ---------- */
+
+.pdf-view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem 1rem 4rem;
+}
+
+.pdf-info {
+  margin: 0;
+  color: var(--parchment-soft);
+  font-size: 0.85rem;
+}
+
+.pdf-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* All sizes inside are relative to the page width, so the preview and the
+   printed A4 break pages at the same places. */
+.a4 {
+  display: flex;
+  flex-direction: column;
+  width: var(--a4-w);
+  height: calc(var(--a4-w) * 1.41428);
+  padding: 4.4em 5.2em 2.8em;
+  overflow: hidden;
+  background: var(--paper-white);
+  color: #1d140b;
+  font-family: var(--font-book);
+  font-size: calc(var(--a4-w) * 0.0185);
+  line-height: 1.45;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.5);
+}
+
+.a4__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+  margin-bottom: 1.8em;
+  padding-bottom: 0.5em;
+  border-bottom: 1px solid #ddd0b6;
+  font-family: var(--font-title);
+  font-size: 0.6em;
+  letter-spacing: 0.14em;
+  color: #7a6545;
+  white-space: nowrap;
+}
+
+.a4__footer {
+  padding-top: 0.8em;
+  text-align: center;
+  font-size: 0.75em;
+  color: #7a6545;
+}
+
+.a4 .chapter__title,
+.a4 .line__who,
+.a4 .line--first .line__text::first-letter {
+  color: #6d1f15;
+}
+
+.a4--title {
+  align-items: center;
+  justify-content: center;
+  gap: 0.8em;
+  text-align: center;
+}
+
+.a4--title h2 {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 3em;
+  color: #6d1f15;
+}
+
+.a4--title p {
+  margin: 0;
+}
+
+.a4__ornament {
+  font-size: 2em;
+  color: var(--gold-dark);
+}
+
+.a4__byline {
+  font-size: 0.85em;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7a6545;
+}
+
+/* ---------- Pages shared by book and measuring ---------- */
+
+.page__body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.measure {
+  position: fixed;
+  top: 0;
+  left: -10000px;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* ---------- Book view ---------- */
+
+.book-view {
+  flex: 1;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: hidden;
+  background-color: #140b06;
+  background-image:
+    radial-gradient(ellipse at 50% 45%, rgb(255 170 80 / 0.18), transparent 62%),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.10) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(90deg, rgb(255 220 170 / 0.035) 0 3px, transparent 3px 23px),
+    linear-gradient(#2d1b10, #160d07);
+}
+
+.book-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+
+.book-controls__right {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.book-controls__indicator {
+  font-family: var(--font-title);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-light);
+  text-align: center;
+}
+
+#sound-btn[aria-pressed="false"] {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.book-stage {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+  padding: 0.5rem 1rem;
+}
+
+.book-nav {
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgb(236 208 138 / 0.35);
+  border-radius: 50%;
+  background: rgb(0 0 0 / 0.3);
+  color: var(--gold-light);
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.book-nav:hover:not(:disabled) {
+  background: rgb(201 162 74 / 0.2);
+}
+
+.book-nav:disabled {
+  opacity: 0.25;
+  cursor: default;
+}
+
+.book-hint {
+  margin: 0;
+  padding: 0.5rem 1rem 1rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: rgb(236 208 138 / 0.6);
+}
+
+.book {
+  --page-h: min(calc(100dvh - 10rem), calc((100vw - 13rem) / 2 / 0.7));
+  --page-w: calc(var(--page-h) * 0.7);
+  --stack-l: 0px;
+  --stack-r: 0px;
+  position: relative;
+  width: calc(var(--page-w) * 2);
+  height: var(--page-h);
+  perspective: 2600px;
+  transition: transform var(--flip-ms) ease-in-out;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* A closed book sits centred: shift by half a page while only one side shows */
+.book--closed-front {
+  transform: translateX(calc(var(--page-w) / -2));
+}
+
+.book--closed-back {
+  transform: translateX(calc(var(--page-w) / 2));
+}
+
+/* Leather boards around the pages */
+.book__board {
+  position: absolute;
+  inset: -12px -16px;
+  z-index: 0;
+  border-radius: 6px;
+  background-color: var(--leather);
+  background-image: var(--leather-images);
+  box-shadow: 0 30px 60px rgb(0 0 0 / 0.65), 0 0 0 1px rgb(0 0 0 / 0.7), inset 0 0 0 1px rgb(236 208 138 / 0.15);
+  transition: left var(--flip-ms) ease-in-out, right var(--flip-ms) ease-in-out;
+}
+
+.book--closed-front .book__board {
+  left: calc(var(--page-w) - 4px);
+}
+
+.book--closed-back .book__board {
+  right: calc(var(--page-w) - 4px);
+}
+
+/* Edges of the page block; thickness follows reading progress */
+.book__stack {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  z-index: 1;
+  background: repeating-linear-gradient(90deg, #f0e1bb 0 1px, #bfa676 1px 2px);
+  transition: width 0.4s ease;
+}
+
+.book__stack--left {
+  right: 100%;
+  width: var(--stack-l);
+  border-radius: 2px 0 0 2px;
+}
+
+.book__stack--right {
+  left: 100%;
+  width: var(--stack-r);
+  border-radius: 0 2px 2px 0;
+}
+
+/* One book page */
+.page {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 2.6em 2.3em 1.4em;
+  overflow: hidden;
+  background-color: var(--parchment);
+  background-image: var(--paper-images);
+  color: var(--ink);
+  font-family: var(--font-book);
+  line-height: 1.42;
+}
+
+.book .page {
+  position: absolute;
+  top: 0;
+  z-index: 1;
+  width: var(--page-w);
+  height: 100%;
+  font-size: clamp(0.78rem, calc(var(--page-h) * 0.026), 1.12rem);
+}
+
+.page--left {
+  left: 0;
+}
+
+.page--right {
+  left: var(--page-w);
+}
+
+/* Shadow towards the spine and darker outer edge */
+.page[data-side="left"] {
+  background-image:
+    linear-gradient(to left, rgb(60 35 10 / 0.38), rgb(60 35 10 / 0.08) 6%, transparent 14%),
+    linear-gradient(to right, rgb(90 60 20 / 0.18), transparent 4%),
+    var(--paper-images);
+}
+
+.page[data-side="right"] {
+  background-image:
+    linear-gradient(to right, rgb(60 35 10 / 0.38), rgb(60 35 10 / 0.08) 6%, transparent 14%),
+    linear-gradient(to left, rgb(90 60 20 / 0.18), transparent 4%),
+    var(--paper-images);
+}
+
+.page__num {
+  padding-top: 0.6em;
+  text-align: center;
+  font-size: 0.78em;
+  letter-spacing: 0.1em;
+  color: var(--ink-muted);
+}
+
+/* Page kinds */
+.page[data-kind="none"] {
+  background: none;
+  visibility: hidden;
+}
+
+.page[data-kind="cover"],
+.page[data-kind="back-cover"] {
+  padding: 1.3em;
+  background-color: var(--leather);
+  background-image:
+    linear-gradient(to right, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0.1) 7%, transparent 12%),
+    var(--leather-images);
+  color: var(--gold-light);
+}
+
+.page[data-kind="back-cover"] {
+  background-image:
+    linear-gradient(to left, rgb(0 0 0 / 0.5), rgb(0 0 0 / 0.1) 7%, transparent 12%),
+    var(--leather-images);
+}
+
+.page[data-kind="endpaper"] {
+  background-color: #1f352e;
+  background-image:
+    var(--noise),
+    repeating-radial-gradient(circle at 30% 40%, #1d3a32 0 7px, #2b4d43 7px 13px, #162c26 13px 19px, #23423a 19px 26px),
+    repeating-radial-gradient(circle at 75% 70%, rgb(201 162 74 / 0.18) 0 2px, transparent 2px 22px);
+  background-blend-mode: normal, normal, screen;
+  justify-content: center;
+  align-items: center;
+}
+
+.cover {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.9em;
+  padding: 1.5em 1em;
+  border: 2px solid var(--gold);
+  border-radius: 3px;
+  outline: 1px solid rgb(201 162 74 / 0.5);
+  outline-offset: -9px;
+  text-align: center;
+  box-shadow: inset 0 0 40px rgb(0 0 0 / 0.55);
+}
+
+.cover__title {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 2.35em;
+  line-height: 1.1;
+  color: var(--gold-light);
+  text-shadow: 0 2px 0 #1a0603, 0 -1px 0 rgb(255 235 170 / 0.35);
+}
+
+.cover__subtitle {
+  margin: 0;
+  font-size: 0.72em;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.cover__byline {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 0.7em;
+  letter-spacing: 0.2em;
+  color: rgb(236 208 138 / 0.75);
+}
+
+/* The ring – with a microchip, of course */
+.cover__emblem {
+  position: relative;
+  width: 4.6em;
+  height: 4.6em;
+}
+
+.cover__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(#f6dc8a, #a87b2a, #fbe7a6, #8c6a24, #f6dc8a);
+  -webkit-mask: radial-gradient(circle, transparent 56%, #000 58%);
+  mask: radial-gradient(circle, transparent 56%, #000 58%);
+  filter: drop-shadow(0 2px 2px rgb(0 0 0 / 0.6));
+}
+
+.cover__chip {
+  position: absolute;
+  inset: 36%;
+  border: 1px solid var(--gold);
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 3px, rgb(236 208 138 / 0.7) 3px 4px) top / 100% 3px no-repeat,
+    repeating-linear-gradient(90deg, transparent 0 3px, rgb(236 208 138 / 0.7) 3px 4px) bottom / 100% 3px no-repeat,
+    linear-gradient(#3b3b3b, #121212);
+}
+
+.cover--back .cover__emblem {
+  width: 2.6em;
+  height: 2.6em;
+  opacity: 0.8;
+}
+
+.exlibris {
+  padding: 1.2em 1.6em;
+  border: 1px solid var(--gold-dark);
+  background-color: var(--parchment);
+  background-image: var(--paper-images);
+  color: var(--ink);
+  text-align: center;
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.4);
+}
+
+.exlibris p {
+  margin: 0;
+}
+
+.exlibris__label {
+  font-family: var(--font-title);
+  font-size: 0.75em;
+  letter-spacing: 0.25em;
+  color: var(--wax);
+}
+
+.title-page,
+.end-page {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.7em;
+  text-align: center;
+}
+
+.title-page h2 {
+  margin: 0;
+  font-family: var(--font-title);
+  font-size: 2.2em;
+  line-height: 1.15;
+  color: var(--wax);
+}
+
+.title-page p,
+.end-page p {
+  margin: 0;
+}
+
+.title-page__rule {
+  width: 40%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+}
+
+.title-page__small {
+  font-style: italic;
+  font-size: 0.9em;
+  color: var(--ink-muted);
+}
+
+.page-ornament {
+  font-size: 1.6em;
+  color: var(--gold-dark);
+}
+
+.page-byline {
+  font-family: var(--font-title);
+  font-size: 0.75em;
+  letter-spacing: 0.18em;
+  color: var(--ink-muted);
+}
+
+.end-page p:first-child {
+  font-family: var(--font-title);
+  font-size: 1.7em;
+  color: var(--wax);
+}
+
+/* The turning leaf: the front shows the page turned away, the back the page
+   being revealed. JS rotates it by 180deg around the spine. */
+.leaf {
+  position: absolute;
+  top: 0;
+  z-index: 3;
+  width: var(--page-w);
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform var(--flip-ms) cubic-bezier(0.4, 0.1, 0.3, 1);
+}
+
+.leaf--forward,
+.leaf--single {
+  left: var(--page-w);
+  transform-origin: left center;
+}
+
+.leaf--single {
+  left: 0;
+}
+
+.leaf--backward {
+  left: 0;
+  transform-origin: right center;
+}
+
+.book .leaf__face {
+  inset: 0;
+  width: auto;
+  height: auto;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.leaf__back {
+  transform: rotateY(180deg);
+}
+
+/* Light and shadow sweeping over the leaf while it turns */
+.leaf__face::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(to right, rgb(0 0 0 / 0.45), rgb(0 0 0 / 0.05) 55%, rgb(255 240 200 / 0.18));
+}
+
+.leaf__back::after {
+  background: linear-gradient(to left, rgb(0 0 0 / 0.45), rgb(0 0 0 / 0.05) 55%, rgb(255 240 200 / 0.18));
+}
+
+.leaf.is-turning .leaf__face::after {
+  animation: leaf-shade var(--flip-ms) ease-in-out;
+}
+
+@keyframes leaf-shade {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* Narrow screens: one page at a time, buttons below the book */
+/* Phones are tall, so a single page gets a slimmer format than a spread */
+.book--single {
+  --page-h: min(calc(100dvh - 9.5rem), calc((100vw - 3rem) / 0.62));
+  --page-w: calc(var(--page-h) * 0.62);
+  width: var(--page-w);
+}
+
+.book--single .page--left {
+  display: none;
+}
+
+.book--single .page--right {
+  left: 0;
+}
+
+@media (max-width: 799px) {
+  .book-controls {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .book-controls .btn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  #fullscreen-btn {
+    display: none;
+  }
+
+  .book-stage {
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem 2rem;
+  }
+
+  .book {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    justify-self: center;
+  }
+
+  #prev-btn {
+    justify-self: end;
+  }
+
+  .book-hint {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .leaf,
+  .book,
+  .book__board {
+    transition: none;
+  }
+}
+
+/* ---------- Footer ---------- */
+
+.site-footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgb(201 162 74 / 0.25);
+  color: var(--parchment-soft);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+/* ---------- Print ---------- */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  :root {
+    --a4-w: 210mm;
+  }
+
+  body {
+    display: block;
+    background: none;
+    color: #000;
+  }
+
+  .topbar,
+  .site-footer,
+  .book-view,
+  .status,
+  .banner,
+  .measure,
+  .pdf-info {
+    display: none !important;
+  }
+
+  /* PDF mode prints exactly the previewed A4 pages */
+  body[data-mode="pdf"] #script {
+    display: none !important;
+  }
+
+  .pdf-view,
+  .pdf-pages {
+    display: block;
+    padding: 0;
+  }
+
+  .a4 {
+    height: 296mm;
+    box-shadow: none;
+    break-after: page;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .a4:last-child {
+    break-after: auto;
+  }
+
+  /* Other modes (Ctrl+P): print the continuous text */
+  body:not([data-mode="pdf"]) #script,
+  body:not([data-mode="pdf"]) #script[hidden] {
+    display: block !important;
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 2cm 2.2cm;
+    background: none;
+    box-shadow: none;
+    font-size: 12pt;
+  }
+
+  .line {
+    break-inside: avoid;
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "par-parmenu-scenar",
+  "private": true,
+  "description": "Pár Pařmenů – Čistý Scénář (fanouškovský projekt)",
+  "scripts": {
+    "convert": "node tools/subs-to-md.mjs",
+    "build": "node tools/build.mjs",
+    "epub": "node tools/epub.mjs",
+    "serve": "node tools/serve.mjs"
+  }
+}
