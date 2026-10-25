@@ -27,7 +27,16 @@
 ```
 index.html              stránka (čisté HTML)
 style.css               vzhled: Web, PDF, Kniha, tisk
-script.js               načtení dat, vyhledávání, filtr postav, stránkování, listování
+js/main.js              start, přepínání režimů, klávesy
+js/screenplay.js        data scénáře (repliky, postavy, kapitoly)
+js/web-view.js          režim Web: text, vyhledávání, filtr postav
+js/pdf-view.js          režim PDF: náhled A4, tisk
+js/book-view.js         režim Kniha: stránky, listování, animace
+js/page-sound.js        zvuk listování
+js/paginator.js         dělení textu na stránky (Kniha i PDF)
+js/render.js            vykreslení repliky, poznámky a kapitoly
+js/text.js              pomocné funkce (hledání bez diakritiky, zvýraznění)
+js/prefs.js             ukládání nastavení v prohlížeči
 data/screenplay.md      scénář k ruční úpravě (jména postav, názvy kapitol)
 data/characters.json    seznam postav a jejich přezdívek
 data/screenplay.json    vygenerovaná data pro web (needitovat ručně)
