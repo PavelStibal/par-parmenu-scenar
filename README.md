@@ -2,6 +2,7 @@
 
 > **Stav projektu:** Ve vývoji
 > **Cíl:** Převést ošklivé titulky s časovými kódy do podoby interaktivní online knihy a e-booku (EPUB) pro fanoušky.
+> **Web:** [pavelstibal.github.io/par-parmenu-scenar](https://pavelstibal.github.io/par-parmenu-scenar/)
 
 ## 🛠 To-Do List (Co je potřeba udělat)
 - [x] Získat surová data z titulků od Bandy Trotlů
