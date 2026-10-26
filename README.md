@@ -88,6 +88,7 @@ V režimu Kniha jde listovat také kliknutím na levou/pravou stránku nebo taž
 ## ⚖️ Autorská práva a poděkování (Disclaimer)
 Tento projekt je čistě nezisková, fanouškovská aktivita (Fan Project).
 - Původní texty a hlášky jsou duševním vlastnictvím tvůrčí skupiny **Banda Trotlů** (2004).
+- Text vychází z oficiálních titulků zveřejněných na webu Bandy Trotlů: [bandatrotlu.com/parparmenu/download.htm](https://www.bandatrotlu.com/parparmenu/download.htm) (úprava titulků: Ondřej Svoboda, Vít Strádal, Vladimír Blahož a Jan Staňa).
 - Původní vizuální a tematické dílo podléhá autorským právům držitelů licence *The Lord of the Rings*.
 - Tento repozitář neslouží ke komerčním účelům a jeho cílem je pouze archivace a usnadnění přístupu komunitě.
 
