@@ -13,7 +13,6 @@
 - [x] Režim „Kniha“ s listováním stránek a režim „PDF“ pro tisk
 - [x] Vygenerovat testovací `.epub` soubor pro Kindle/čtečky
 - [ ] Otestovat `.epub` na čtečce
-- [ ] Přepnout repozitář do režimu **Public** 🚀
 
 ## 👥 Přehled kódových jmen postav
 - Fritol Šourek (Frodo)
