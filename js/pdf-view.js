@@ -33,7 +33,7 @@ export class PdfView {
     const contentPages = paginate({
       measure,
       blocks: screenplay.blocks,
-      render: (block) => renderBlock(block, screenplay),
+      render: (block, previous) => renderBlock(block, screenplay, { previous }),
       skeleton: (body) => [el("div", "a4__header", "X"), body, el("div", "a4__footer", "0")],
       slack: 0.015,
     });
@@ -55,7 +55,7 @@ export class PdfView {
       const header = el("div", "a4__header");
       header.append(el("span", null, screenplay.title), el("span", null, screenplay.chapterTitle(blocks[0].chapter)));
       const body = el("div", "page__body");
-      for (const block of blocks) body.append(renderBlock(block, screenplay));
+      blocks.forEach((block, k) => body.append(renderBlock(block, screenplay, { previous: blocks[k - 1] })));
       page.append(header, body, el("div", "a4__footer", String(i + 1)));
       frag.append(page);
     });

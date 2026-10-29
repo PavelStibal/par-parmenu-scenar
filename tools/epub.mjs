@@ -41,6 +41,7 @@ h2 { font-size: 1.4em; margin: 1.5em 0 1.2em; page-break-before: always; }
 .byline { text-align: center; font-size: 0.85em; letter-spacing: 0.15em; text-transform: uppercase; }
 .ornament { text-align: center; font-size: 1.4em; margin: 1em 0; }
 .line { margin: 0 0 0.9em; page-break-inside: avoid; }
+.line.continued { margin-top: -0.7em; }
 .who { display: block; font-size: 0.75em; font-weight: bold; letter-spacing: 0.1em; text-transform: uppercase; page-break-after: avoid; }
 .who.unknown { font-weight: normal; opacity: 0.6; }
 .text { margin: 0; text-indent: 0; }
@@ -50,16 +51,24 @@ h2 { font-size: 1.4em; margin: 1.5em 0 1.2em; page-break-before: always; }
 
 function renderChapter(chapter) {
   const parts = [`<section epub:type="chapter">`, `<h2>${esc(chapter.title)}</h2>`];
+  let previous = null;
   for (const block of chapter.blocks) {
     if (block.type === "note") {
       parts.push(`<p class="note">(${esc(block.text)})</p>`);
+      previous = block;
       continue;
     }
-    const name = characters.get(block.who);
-    const who = name
-      ? `<span class="who">${esc(name)}</span>`
-      : `<span class="who unknown">???</span>`;
-    parts.push(`<div class="line">${who}<p class="text">${esc(block.text)}</p></div>`);
+    const text = `<p class="text">${esc(block.text)}</p>`;
+    if (block.who != null && previous?.type === "line" && previous.who === block.who) {
+      parts.push(`<div class="line continued">${text}</div>`);
+    } else {
+      const name = characters.get(block.who);
+      const who = name
+        ? `<span class="who">${esc(name)}</span>`
+        : `<span class="who unknown">???</span>`;
+      parts.push(`<div class="line">${who}${text}</div>`);
+    }
+    previous = block;
   }
   parts.push("</section>");
   return parts.join("\n");

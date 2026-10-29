@@ -18,8 +18,8 @@ export class Screenplay {
     let idx = 0;
     data.chapters.forEach((chapter, chapterIndex) => {
       this.#blocks.push({ idx: idx++, type: "chapter", chapter: chapterIndex, text: chapter.title });
-      let first = true;
       for (const b of chapter.blocks) {
+        const previous = this.#blocks.at(-1);
         this.#blocks.push({
           idx: idx++,
           type: b.type,
@@ -28,10 +28,9 @@ export class Screenplay {
           who: b.who ?? null,
           start: b.start,
           end: b.end,
-          firstInChapter: b.type === "line" && first,
+          sameSpeaker: b.type === "line" && b.who != null && previous.type === "line" && previous.who === b.who,
           search: fold(b.text),
         });
-        if (b.type === "line") first = false;
       }
     });
   }

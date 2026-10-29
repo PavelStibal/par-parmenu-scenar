@@ -112,7 +112,7 @@ export class BookView {
     const pages = paginate({
       measure,
       blocks: this.#screenplay.blocks,
-      render: (block) => renderBlock(block, this.#screenplay),
+      render: (block, previous) => renderBlock(block, this.#screenplay, { previous }),
       skeleton: (body) => [body, el("div", "page__num", "— 0 —")],
     });
     measure.className = "measure";
@@ -184,7 +184,7 @@ export class BookView {
       }
       case "content": {
         const body = el("div", "page__body");
-        for (const block of page.blocks) body.append(renderBlock(block, screenplay));
+        page.blocks.forEach((block, k) => body.append(renderBlock(block, screenplay, { previous: page.blocks[k - 1] })));
         return [body, el("div", "page__num", `— ${page.number} —`)];
       }
       default:

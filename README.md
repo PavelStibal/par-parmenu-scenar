@@ -8,19 +8,32 @@
 - [x] Získat surová data z titulků od Bandy Trotlů
 - [x] Vyčistit časové značky `{1234}{5678}` z úvodní části
 - [x] Vyčistit a naformátovat zbytek textu až do konce
-- [ ] Doplnit jména postav k replikám
-- [ ] Pojmenovat kapitoly
+- [x] Doplnit jména postav k replikám
+- [x] Pojmenovat kapitoly
 - [x] Vytvořit jednoduché HTML s vyhledáváním hlášek
 - [x] Režim „Kniha“ s listováním stránek a režim „PDF“ pro tisk
 - [x] Vygenerovat testovací `.epub` soubor pro Kindle/čtečky
 - [ ] Otestovat `.epub` na čtečce
 
 ## 👥 Přehled kódových jmen postav
-- Fritol Šourek (Frodo)
-- Slim / Slimsněd Chrupavka (Sam)
-- Šmajdalf Šmejdoplášť (Gandalf)
+- Fritol Pytlík (Frodo)
+- Slim (Sam)
+- Šmajdalf Šedý / Bílý (Gandalf)
+- Paragon (Aragorn)
+- Legoland (Legolas)
+- Krimli (Gimli)
+- Bobromil (Boromir)
+- Smradupán (Saruman)
+- Chlup (Glum)
+- Bimbo (Bilbo)
+- Pepin (Pippin)
+- Plíšek (Merry)
+- Elbond (Elrond)
+- Galadana (Galadriel)
 - Saudruh (Sauron)
-- Paragon / Účtenka / Chodník (Aragorn)
+- Vypravěč
+
+Úplný seznam postav včetně vedlejších je v `data/characters.json`.
 
 ## 📁 Struktura projektu
 

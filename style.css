@@ -384,6 +384,11 @@ body[data-mode="pdf"] .topbar {
   margin: 0 0 0.95em;
 }
 
+/* Collapses with the previous margin, so a speech by one speaker stays together */
+.line--continued {
+  margin-top: -0.75em;
+}
+
 .line__who {
   display: block;
   font-family: var(--font-title);
@@ -400,20 +405,6 @@ body[data-mode="pdf"] .topbar {
 
 .line__text {
   margin: 0.05em 0 0;
-}
-
-.line--first .line__text::first-letter {
-  float: left;
-  margin: 0.05em 0.1em 0 0;
-  font-family: var(--font-title);
-  font-size: 3.1em;
-  line-height: 0.82;
-  color: var(--wax);
-  text-shadow: 1px 1px 0 rgb(201 162 74 / 0.6);
-}
-
-.line--first {
-  display: flow-root;
 }
 
 .note {
@@ -526,8 +517,7 @@ body[data-mode="pdf"] .topbar {
 }
 
 .a4 .chapter__title,
-.a4 .line__who,
-.a4 .line--first .line__text::first-letter {
+.a4 .line__who {
   color: #6d1f15;
 }
 

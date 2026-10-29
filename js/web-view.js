@@ -42,6 +42,7 @@ export class WebView {
     const frag = document.createDocumentFragment();
     let section = null;
     let sectionHasContent = false;
+    let previous = null;
     let hits = 0;
 
     const closeSection = () => {
@@ -54,6 +55,7 @@ export class WebView {
         section = el("section", "chapter");
         section.append(renderBlock(block, this.#screenplay));
         sectionHasContent = !filtering;
+        previous = null;
         continue;
       }
       if (filtering) {
@@ -61,7 +63,8 @@ export class WebView {
         hits++;
         sectionHasContent = true;
       }
-      section.append(renderBlock(block, this.#screenplay, this.#query));
+      section.append(renderBlock(block, this.#screenplay, { query: this.#query, previous }));
+      previous = block;
     }
     closeSection();
 

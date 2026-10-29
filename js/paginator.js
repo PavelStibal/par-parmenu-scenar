@@ -21,12 +21,12 @@ export function paginate({ measure, blocks, render, skeleton, slack = 0 }) {
 
   for (const block of blocks) {
     if (block.type === "chapter") flush();
-    const node = render(block);
+    const node = render(block, current.at(-1) ?? null);
     body.append(node);
     if (current.length && overflows()) {
       node.remove();
       flush();
-      body.append(node);
+      body.append(render(block, null));
     }
     current.push(block);
   }

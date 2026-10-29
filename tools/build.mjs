@@ -16,7 +16,12 @@ const characters = JSON.parse(await readFile(CHARACTERS, "utf8"));
 
 const byName = new Map();
 for (const c of characters) {
-  for (const key of [c.id, c.name, c.name.split(" ")[0], ...(c.aliases ?? [])]) byName.set(fold(key), c.id);
+  for (const key of [c.id, c.name, ...(c.aliases ?? [])]) byName.set(fold(key), c.id);
+}
+// First names only as a fallback, so "Choboti" never resolves to "Choboti zvenčí".
+for (const c of characters) {
+  const first = fold(c.name.split(" ")[0]);
+  if (!byName.has(first)) byName.set(first, c.id);
 }
 
 const unknownNames = new Map();
