@@ -7,15 +7,25 @@ export class WebView {
   #search;
   #count;
   #chips;
+  #castToggle;
   #query = "";
   #activeCharacters = new Set();
+  #compact = false;
+  #castOpen = false;
 
-  constructor({ root, search, count, chips }, screenplay) {
+  constructor({ root, search, count, chips, castToggle }, screenplay) {
     this.#screenplay = screenplay;
     this.#root = root;
     this.#search = search;
     this.#count = count;
     this.#chips = chips;
+    this.#castToggle = castToggle;
+
+    castToggle.addEventListener("click", () => {
+      this.#castOpen = !this.#castOpen;
+      this.#syncCast();
+    });
+    window.addEventListener("scroll", () => this.#onScroll(), { passive: true });
 
     const onSearch = debounce(() => {
       this.#query = fold(search.value.trim());
@@ -127,5 +137,27 @@ export class WebView {
         : this.#activeCharacters.has(chip.dataset.id);
       chip.setAttribute("aria-pressed", String(pressed));
     }
+    this.#syncCast();
+  }
+
+  // Collapsing the chips shortens the sticky header and the browser may pull the
+  // scroll position up by that height, so the threshold sits above it and the
+  // chips come back only near the very top.
+  #onScroll() {
+    const y = window.scrollY;
+    const compact = this.#compact ? y > 4 : y > this.#chips.offsetHeight + 120;
+    if (compact === this.#compact) return;
+    this.#compact = compact;
+    this.#castOpen = false;
+    this.#syncCast();
+  }
+
+  #syncCast() {
+    const cast = this.#castToggle.parentElement;
+    cast.classList.toggle("cast--compact", this.#compact);
+    cast.classList.toggle("cast--open", this.#castOpen);
+    this.#castToggle.setAttribute("aria-expanded", String(!this.#compact || this.#castOpen));
+    const selected = this.#activeCharacters.size;
+    this.#castToggle.textContent = this.#castOpen ? "Skrýt postavy" : selected ? `Postavy (${selected})` : "Postavy";
   }
 }

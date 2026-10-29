@@ -263,11 +263,33 @@ body[data-mode="pdf"] .topbar {
   color: var(--parchment-soft);
 }
 
-.chips {
+.cast {
   grid-area: chips;
   display: flex;
+  gap: 0.4rem;
+  align-items: flex-start;
+  min-width: 0;
+}
+
+.cast__toggle {
+  display: none;
+  flex: none;
+}
+
+.cast--compact .cast__toggle {
+  display: inline-block;
+}
+
+.cast--compact:not(.cast--open) .chips {
+  display: none;
+}
+
+.chips {
+  display: flex;
+  flex: 1;
   flex-wrap: wrap;
   gap: 0.4rem;
+  min-width: 0;
 }
 
 .chip {
@@ -319,8 +341,8 @@ body[data-mode="pdf"] .topbar {
     flex-wrap: nowrap;
     overflow-x: auto;
     scrollbar-width: none;
-    margin: 0 -1rem;
-    padding: 0 1rem 0.1rem;
+    margin-right: -1rem;
+    padding: 0 1rem 0.1rem 0;
   }
 
   .pdf-actions {

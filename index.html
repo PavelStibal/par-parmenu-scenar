@@ -37,7 +37,11 @@
       <span class="pdf-actions__hint">V dialogu tisku zvolte „Uložit jako PDF“.</span>
     </div>
 
-    <div id="character-filter" class="chips" data-for="web" role="group" aria-label="Filtr podle postav"></div>
+    <div class="cast" data-for="web">
+      <button type="button" id="cast-toggle" class="chip cast__toggle" aria-expanded="false"
+              aria-controls="character-filter">Postavy</button>
+      <div id="character-filter" class="chips" role="group" aria-label="Filtr podle postav"></div>
+    </div>
   </header>
 
   <main class="main">

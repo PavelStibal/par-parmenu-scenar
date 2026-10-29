@@ -30,7 +30,13 @@ $("sample-banner").hidden = !screenplay.isSample;
 
 const measure = $("measure");
 const web = new WebView(
-  { root: sections.web, search: $("search-input"), count: $("search-count"), chips: $("character-filter") },
+  {
+    root: sections.web,
+    search: $("search-input"),
+    count: $("search-count"),
+    chips: $("character-filter"),
+    castToggle: $("cast-toggle"),
+  },
   screenplay,
 );
 const pdf = new PdfView({ pages: $("pdf-pages"), info: $("pdf-info"), printButton: $("print-btn"), measure }, screenplay);
