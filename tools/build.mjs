@@ -58,10 +58,19 @@ const ensureChapter = () => {
   return chapter;
 };
 
+// Repeated until nothing changes, so a nested "<!-<!-- -->-" cannot leave a comment opener behind.
+const stripComments = (text) => {
+  let previous;
+  do {
+    previous = text;
+    text = text.replace(/<!--[\s\S]*?-->/g, "");
+  } while (text !== previous);
+  return text;
+};
+
 for (const paragraph of md.split(/\n\s*\n/)) {
   const time = /<!--\s*(\d+)\s*-\s*(\d+)\s*-->/.exec(paragraph);
-  const lines = paragraph
-    .replace(/<!--[\s\S]*?-->/g, "")
+  const lines = stripComments(paragraph)
     .split("\n")
     .map((l) => l.trim())
     .filter(Boolean);
